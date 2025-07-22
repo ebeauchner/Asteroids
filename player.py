@@ -1,11 +1,13 @@
 from circleshape import *
 from constants import *
 from main import *
+from shot import *
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x,y,radius=PLAYER_RADIUS)
         self.rotation = 0
+        self.cooldown = 0
         for group in self.containers:
             group.add(self)
 
@@ -39,4 +41,14 @@ class Player(CircleShape):
             self.move(dt)
         if keys[pygame.K_s]:
             self.move(-dt)
+        if keys[pygame.K_SPACE]:
+            self.shoot()
+
+        self.cooldown -= dt
+
+    def shoot(self):
+        if self.cooldown <= 0:
+            forward = pygame.math.Vector2(0, 1).rotate(self.rotation)
+            Shot(self.position, forward)
+            self.cooldown = PLAYER_SHOOT_COOLDOWN
     
